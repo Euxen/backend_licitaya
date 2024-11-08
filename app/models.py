@@ -1,18 +1,50 @@
-from sqlalchemy import Boolean, Column, Integer, String, DateTime
-from sqlalchemy.dialects.postgresql import JSONB
+# backend/models.py
+from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean
+from sqlalchemy.sql import func
 from .database import Base
 
-class User(Base):
-    __tablename__ = "users"
-    
+class Tender(Base):
+    __tablename__ = "tender"
+
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    email = Column(String, unique=True, index=True)
-    phone = Column(String, nullable=True)  # This was missing
-    company = Column(String, nullable=True)
-    is_active = Column(Boolean, default=True)
-    subscription_tier = Column(String, default='free')
-    is_verified = Column(Boolean, default=False)
-    verification_token = Column(String, unique=True, nullable=True)
-    verification_token_expires = Column(DateTime, nullable=True)
-    preferences = Column(JSONB, nullable=True, default=dict)
+    reference_code = Column(String, unique=True, index=True)
+    request_name = Column(String)
+    phase = Column(String)
+    state = Column(String)
+    procedure_type = Column(String)
+    base_total_price = Column(Float)
+    detail_url = Column(String)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    total_lotes = Column(Integer)
+
+# backend/schemas.py
+from pydantic import BaseModel
+from datetime import datetime
+from typing import List, Optional
+
+class TenderBase(BaseModel):
+    reference_code: str
+    request_name: str
+    phase: str
+    state: str
+    procedure_type: str
+    base_total_price: float
+    detail_url: str
+    total_lotes: int
+
+class Tender(TenderBase):
+    id: int
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+class PaginationResponse(BaseModel):
+    page: int
+    limit: int
+    total: int
+
+class TenderList(BaseModel):
+    data: List[Tender]
+    pagination: PaginationResponse
+
