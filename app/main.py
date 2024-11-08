@@ -121,3 +121,24 @@ async def get_tender(tender_id: int, db: Session = Depends(get_db)):
     if tender is None:
         raise HTTPException(status_code=404, detail="Tender not found")
     return tender
+
+    
+@app.get("/api/health")
+async def health_check():
+    try:
+        # Verify database connection
+        async with engine.begin() as conn:
+            await conn.execute(text("SELECT 1"))
+        
+        return {
+            "status": "healthy",
+            "database": "connected",
+            "timestamp": datetime.utcnow().isoformat(),
+            "environment": "production" if os.getenv("RENDER") else "development"
+        }
+    except Exception as e:
+        return {
+            "status": "unhealthy",
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }
