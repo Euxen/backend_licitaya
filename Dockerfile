@@ -1,4 +1,4 @@
-# backend/Dockerfile
+# Update Dockerfile
 FROM python:3.11-slim
 
 WORKDIR /app
@@ -16,5 +16,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application
 COPY . .
 
+# Make sure the app directory is in the Python path
+ENV PYTHONPATH=/app
+
 # Command to run the application
-CMD gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:$PORT
+CMD gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:$PORT

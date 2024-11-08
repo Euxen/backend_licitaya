@@ -1,4 +1,4 @@
-# backend/main.py
+# app/main.py (Move the existing main.py content here and update imports)
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -7,8 +7,8 @@ from datetime import datetime
 import os
 from dotenv import load_dotenv
 
-from . import models, schemas
-from .database import engine, get_db
+from app import models, schemas
+from app.database import engine, get_db
 
 # Load environment variables
 load_dotenv()
