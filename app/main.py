@@ -6,6 +6,9 @@ from typing import List, Optional
 from datetime import datetime
 import os
 from dotenv import load_dotenv
+from datetime import datetime, timezone
+from sqlalchemy import text
+import os
 
 from app import models, schemas
 from app.database import engine, get_db
@@ -133,12 +136,12 @@ async def health_check():
         return {
             "status": "healthy",
             "database": "connected",
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "environment": "production" if os.getenv("RENDER") else "development"
         }
     except Exception as e:
         return {
             "status": "unhealthy",
             "error": str(e),
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
